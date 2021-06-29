@@ -35,7 +35,7 @@ const NavLink = ({ children }) => (
   </Link>
 );
 
-export default function WithAction() {
+export default function MainLayout() {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -85,9 +85,6 @@ export default function WithAction() {
                 />
               </MenuButton>
               <MenuList>
-                <MenuItem>Link 1</MenuItem>
-                <MenuItem>Link 2</MenuItem>
-                <MenuDivider />
                 <MenuItem color="red.600">Sair</MenuItem>
               </MenuList>
             </Menu>
@@ -106,7 +103,7 @@ export default function WithAction() {
       </Box>
 
       <Flex alignItems="center" justifyContent="center">
-        <Box p={4}>Main Content Here</Box>
+        <Box w="100%" p={4} m={30} boxShadow="base">Main Content Here</Box>
       </Flex>
     </>
   );
