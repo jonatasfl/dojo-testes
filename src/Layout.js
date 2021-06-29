@@ -10,13 +10,13 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
-  MenuDivider,
   useDisclosure,
   useColorModeValue,
   Stack,
 } from '@chakra-ui/react';
 import { HamburgerIcon, CloseIcon, AddIcon } from '@chakra-ui/icons';
 
+import Routes from './routes';
 import logo from "./assets/money.png";
 
 const Links = ['Dashboard', 'Minha conta'];
@@ -103,7 +103,9 @@ export default function MainLayout() {
       </Box>
 
       <Flex alignItems="center" justifyContent="center">
-        <Box w="100%" p={4} m={30} boxShadow="base">Main Content Here</Box>
+        <Box w="100%" p={4} m={30} boxShadow="base">
+          <Routes />
+        </Box>
       </Flex>
     </>
   );
