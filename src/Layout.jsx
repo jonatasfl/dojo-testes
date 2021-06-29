@@ -14,7 +14,7 @@ import {
   useColorModeValue,
   Stack,
 } from '@chakra-ui/react';
-import { HamburgerIcon, CloseIcon, AddIcon } from '@chakra-ui/icons';
+import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
 
 import Routes from './routes';
 import logo from './assets/money.png';
@@ -61,7 +61,7 @@ export default function MainLayout() {
             </HStack>
           </HStack>
           <Flex alignItems="center">
-            <Button
+            {/* <Button
               variant="solid"
               colorScheme="teal"
               size="sm"
@@ -69,7 +69,7 @@ export default function MainLayout() {
               leftIcon={<AddIcon />}
             >
               Action
-            </Button>
+            </Button> */}
             <Menu>
               <MenuButton
                 as={Button}
