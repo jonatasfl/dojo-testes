@@ -1,7 +1,7 @@
-import { ChakraProvider, Flex } from "@chakra-ui/react";
-import { BrowserRouter } from "react-router-dom"
+import { ChakraProvider } from '@chakra-ui/react';
+import { BrowserRouter } from 'react-router-dom';
 
-import Layout from "./Layout";
+import Layout from './Layout';
 
 function App() {
   return (
@@ -10,7 +10,6 @@ function App() {
         <Layout />
       </BrowserRouter>
     </ChakraProvider>
-    
   );
 }
 
