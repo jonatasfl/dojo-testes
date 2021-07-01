@@ -9,8 +9,11 @@ import {
   Flex,
   Heading,
   Button,
+  useDisclosure,
 } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
+
+import ModalTransaction from '../../components/ModalTransaction';
 
 const transactions = [
   {
@@ -37,11 +40,14 @@ const transactions = [
 ];
 
 export default function DashboardPage() {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
     <>
+      <ModalTransaction isOpen={isOpen} onClose={onClose} />
       <Flex justifyContent="space-between" py={4}>
         <Heading size="md">Transações</Heading>
-        <Button colorScheme="teal" leftIcon={<AddIcon />}>
+        <Button colorScheme="teal" leftIcon={<AddIcon />} onClick={onOpen}>
           Nova transação
         </Button>
       </Flex>
