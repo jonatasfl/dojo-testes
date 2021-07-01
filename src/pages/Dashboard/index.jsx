@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid';
 import {
   Table,
   Thead,
@@ -17,21 +18,21 @@ import ModalTransaction from '../../components/ModalTransaction';
 
 const transactions = [
   {
-    id: 1,
+    id: nanoid(),
     date: new Date(),
     description: 'Netflix',
     method: 'Cartão de Crédito',
     value: 45,
   },
   {
-    id: 2,
+    id: nanoid(),
     date: new Date(),
     description: 'Lanche',
     method: 'Cartão de Crédito',
     value: 8.6,
   },
   {
-    id: 3,
+    id: nanoid(),
     date: new Date(),
     description: 'Red Dead Redemption 2',
     method: 'Cartão de Crédito',

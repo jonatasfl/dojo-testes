@@ -10,13 +10,15 @@ import {
   InputGroup,
   InputLeftAddon,
   Input,
+  RadioGroup,
+  Radio,
   Button,
 } from '@chakra-ui/react';
 
 export default function ModalTransaction({
-  isEditing = false,
   isOpen = false,
   onClose,
+  isEditing = false,
 }) {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -30,6 +32,16 @@ export default function ModalTransaction({
           <Stack spacing={3}>
             <Input placeholder="Data" />
             <Input placeholder="Descrição" />
+            <RadioGroup defaultValue="2">
+              <Stack spacing={5} direction="row">
+                <Radio colorScheme="red" value="1">
+                  Despesa
+                </Radio>
+                <Radio colorScheme="green" value="2">
+                  Receita
+                </Radio>
+              </Stack>
+            </RadioGroup>
             <InputGroup>
               <InputLeftAddon>R$</InputLeftAddon>
               <Input placeholder="Valor" />
