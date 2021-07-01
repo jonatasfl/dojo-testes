@@ -21,13 +21,23 @@ const transactions = [
     id: nanoid(),
     date: new Date(),
     description: 'Netflix',
+    type: 'despesa',
     method: 'Cartão de Crédito',
     value: 45,
   },
   {
     id: nanoid(),
     date: new Date(),
+    description: 'Pix do ciclano',
+    type: 'receita',
+    method: null,
+    value: 130,
+  },
+  {
+    id: nanoid(),
+    date: new Date(),
     description: 'Lanche',
+    type: 'despesa',
     method: 'Cartão de Crédito',
     value: 8.6,
   },
@@ -35,6 +45,7 @@ const transactions = [
     id: nanoid(),
     date: new Date(),
     description: 'Red Dead Redemption 2',
+    type: 'despesa',
     method: 'Cartão de Crédito',
     value: 220,
   },
@@ -70,7 +81,11 @@ export default function DashboardPage() {
               <Td>{item.date.toLocaleDateString()}</Td>
               <Td>{item.description}</Td>
               <Td>{item.method}</Td>
-              <Td isNumeric>
+              <Td
+                isNumeric
+                color={item.type === 'despesa' ? 'red.400' : 'green.500'}
+              >
+                {item.type === 'despesa' ? '-' : ''}
                 {item.value.toLocaleString('pt-br', {
                   style: 'currency',
                   currency: 'BRL',
