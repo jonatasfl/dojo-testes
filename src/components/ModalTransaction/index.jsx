@@ -30,7 +30,7 @@ export default function ModalTransaction({
         <ModalCloseButton />
         <ModalBody>
           <Stack spacing={3}>
-            <Input placeholder="Data" />
+            <Input type="date" placeholder="Data" />
             <Input placeholder="Descrição" />
             <RadioGroup defaultValue="2">
               <Stack spacing={5} direction="row">
