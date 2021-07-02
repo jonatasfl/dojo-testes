@@ -12,58 +12,63 @@ import {
   AlertDescription,
   Stack,
   InputGroup,
-  InputLeftAddon,
+  InputLeftElement,
   Input,
   RadioGroup,
   Radio,
   Button,
 } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as Yup from 'yup';
+
+const schema = Yup.object().shape({
+  date: Yup.string().required('Informe a data'),
+  description: Yup.string().required('Informe a descrição'),
+  type: Yup.string().required('Informe o tipo'),
+  value: Yup.number().required('Informe o valor'),
+});
 
 export default function ModalTransaction({
   isOpen = false,
   onClose,
   createTransaction,
-  data = {},
+  editData = {},
 }) {
-  const [date, setDate] = useState('');
-  const [description, setDescription] = useState('');
-  const [type, setType] = useState('');
-  const [method] = useState('');
-  const [value, setValue] = useState(null);
-  const [hasError, setHasError] = useState(false);
+  const isEdit = !!Object.keys(editData).length;
 
-  const isEdit = !!Object.keys(data).length;
+  const {
+    register,
+    setValue,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({ resolver: yupResolver(schema) });
 
   useEffect(() => {
+    register('type');
+
     if (!isOpen) {
-      setDate('');
-      setDescription('');
-      setType('');
-      setValue(null);
-      setHasError(false);
+      reset();
     }
   }, [isOpen]);
 
-  function handleCreateTransaction() {
-    if (!!date && !!description && !!type && !!value) {
-      createTransaction(new Date(date), description, type, method, value);
-      onClose();
-    } else {
-      setHasError(true);
-    }
+  function handleCreateTransaction(data) {
+    createTransaction({ ...data, date: new Date(data.date) });
+    onClose();
   }
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent as="form" onSubmit={handleSubmit(handleCreateTransaction)}>
         <ModalHeader>
           {isEdit ? 'Editar transação' : 'Cadastrar transação'}
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          {hasError && (
+          {!!Object.keys(errors).length && (
             <Alert status="error" mb={3}>
               <AlertIcon />
               <AlertTitle mr={2}>Atenção!</AlertTitle>
@@ -74,30 +79,40 @@ export default function ModalTransaction({
             <Input
               type="date"
               placeholder="Data"
-              value={date}
-              onChange={e => setDate(e.target.value)}
+              {...register('date')}
+              isInvalid={errors.date}
             />
             <Input
               placeholder="Descrição"
-              value={description}
-              onChange={e => setDescription(e.target.value)}
+              {...register('description')}
+              isInvalid={errors.description}
             />
-            <RadioGroup value={type} onChange={setType}>
+            <RadioGroup onChange={value => setValue('type', value)}>
               <Stack spacing={5} direction="row">
-                <Radio colorScheme="red" value="expense">
+                <Radio
+                  colorScheme="red"
+                  value="expense"
+                  isInvalid={errors.type}
+                >
                   Despesa
                 </Radio>
-                <Radio colorScheme="green" value="recipe">
+                <Radio
+                  colorScheme="green"
+                  value="recipe"
+                  isInvalid={errors.type}
+                >
                   Receita
                 </Radio>
               </Stack>
             </RadioGroup>
             <InputGroup>
-              <InputLeftAddon>R$</InputLeftAddon>
+              <InputLeftElement pointerEvents="none" color="gray.300">
+                R$
+              </InputLeftElement>
               <Input
                 placeholder="Valor"
-                value={value}
-                onChange={e => setValue(e.target.value)}
+                {...register('value')}
+                isInvalid={errors.value}
               />
             </InputGroup>
           </Stack>
@@ -107,7 +122,7 @@ export default function ModalTransaction({
           <Button variant="ghost" colorScheme="red" onClick={onClose} mr={3}>
             Cancelar
           </Button>
-          <Button colorScheme="teal" onClick={handleCreateTransaction}>
+          <Button colorScheme="teal" type="submit">
             {isEdit ? 'Atualizar' : 'Cadastrar'}
           </Button>
         </ModalFooter>

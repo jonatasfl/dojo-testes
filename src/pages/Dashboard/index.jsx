@@ -40,7 +40,7 @@ export default function DashboardPage() {
   const [transactions, setTransactions] = useState(initialData);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  function createTransaction(date, description, type, method, value) {
+  function createTransaction({ date, description, type, method, value }) {
     setTransactions(currentState => [
       ...currentState,
       {
