@@ -13,10 +13,13 @@ import {
   Button,
   useDisclosure,
   useToast,
+  Divider,
+  Box,
 } from '@chakra-ui/react';
 import { AddIcon, DeleteIcon, EditIcon } from '@chakra-ui/icons';
 
 import ModalTransaction from '../../components/ModalTransaction';
+import Total from '../../components/Total';
 
 const methods = {
   credit: 'Cartão de Crédito',
@@ -107,6 +110,14 @@ export default function DashboardPage() {
     });
   }
 
+  const totalRecipes = transactions
+    .filter(item => item.type === 'recipe')
+    .reduce((acc, current) => acc + current.value, 0);
+
+  const totalExpenses = transactions
+    .filter(item => item.type === 'expense')
+    .reduce((acc, current) => acc + current.value, 0);
+
   return (
     <>
       <ModalTransaction
@@ -115,6 +126,15 @@ export default function DashboardPage() {
         saveTransaction={saveTransaction}
         editData={edition}
       />
+      <Flex justifyContent="flex-end" mb={3}>
+        <Box mr={10}>
+          <Total type="inbound" value={totalRecipes} />
+        </Box>
+        <Box>
+          <Total type="outbound" value={totalExpenses} />
+        </Box>
+      </Flex>
+      <Divider />
       <Flex justifyContent="space-between" py={4}>
         <Heading size="md">Transações</Heading>
         <Button colorScheme="teal" leftIcon={<AddIcon />} onClick={onOpen}>
