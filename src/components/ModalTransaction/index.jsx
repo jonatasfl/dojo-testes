@@ -17,6 +17,7 @@ import {
   RadioGroup,
   Radio,
   Button,
+  Select,
 } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
@@ -27,13 +28,14 @@ const schema = Yup.object().shape({
   date: Yup.string().required('Informe a data'),
   description: Yup.string().required('Informe a descrição'),
   type: Yup.string().required('Informe o tipo'),
+  method: Yup.string(),
   value: Yup.number().required('Informe o valor'),
 });
 
 export default function ModalTransaction({
   isOpen = false,
   onClose,
-  createTransaction,
+  saveTransaction,
   editData = {},
 }) {
   const isEdit = !!Object.keys(editData).length;
@@ -44,25 +46,38 @@ export default function ModalTransaction({
     handleSubmit,
     formState: { errors },
     reset,
+    watch,
   } = useForm({ resolver: yupResolver(schema) });
+
+  const watchType = watch('type');
 
   useEffect(() => {
     register('type');
+    setValue('type', editData.type);
 
     if (!isOpen) {
       reset();
     }
   }, [isOpen]);
+  useEffect(() => {
+    if (watchType === 'recipe') {
+      setValue('method', '');
+    }
+  }, [watchType]);
+  useEffect(() => {
+    console.log(errors);
+  }, [errors]);
 
-  function handleCreateTransaction(data) {
-    createTransaction({ ...data, date: new Date(data.date) });
+  function onSubmit(data) {
+    const id = isEdit ? editData.id : null;
+    saveTransaction(data, id);
     onClose();
   }
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
       <ModalOverlay />
-      <ModalContent as="form" onSubmit={handleSubmit(handleCreateTransaction)}>
+      <ModalContent as="form" onSubmit={handleSubmit(onSubmit)}>
         <ModalHeader>
           {isEdit ? 'Editar transação' : 'Cadastrar transação'}
         </ModalHeader>
@@ -80,14 +95,19 @@ export default function ModalTransaction({
               type="date"
               placeholder="Data"
               {...register('date')}
+              defaultValue={editData.date}
               isInvalid={errors.date}
             />
             <Input
               placeholder="Descrição"
               {...register('description')}
+              defaultValue={editData.description}
               isInvalid={errors.description}
             />
-            <RadioGroup onChange={value => setValue('type', value)}>
+            <RadioGroup
+              onChange={value => setValue('type', value)}
+              defaultValue={editData.type}
+            >
               <Stack spacing={5} direction="row">
                 <Radio
                   colorScheme="red"
@@ -105,6 +125,18 @@ export default function ModalTransaction({
                 </Radio>
               </Stack>
             </RadioGroup>
+            {watchType === 'expense' && (
+              <Select
+                placeholder="Selecione o método de pagamento"
+                {...register('method')}
+                defaultValue={editData.method}
+              >
+                <option value="credit">Crédito</option>
+                <option value="debit">Débito</option>
+                <option value="boleto">Boleto</option>
+                <option value="pix">PIX</option>
+              </Select>
+            )}
             <InputGroup>
               <InputLeftElement pointerEvents="none" color="gray.300">
                 R$
@@ -112,6 +144,7 @@ export default function ModalTransaction({
               <Input
                 placeholder="Valor"
                 {...register('value')}
+                defaultValue={editData.value}
                 isInvalid={errors.value}
               />
             </InputGroup>

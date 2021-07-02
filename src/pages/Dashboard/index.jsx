@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { nanoid } from 'nanoid';
 import {
   Table,
@@ -12,33 +12,50 @@ import {
   Heading,
   Button,
   useDisclosure,
+  useToast,
 } from '@chakra-ui/react';
-import { AddIcon } from '@chakra-ui/icons';
+import { AddIcon, DeleteIcon, EditIcon } from '@chakra-ui/icons';
 
 import ModalTransaction from '../../components/ModalTransaction';
+
+const methods = {
+  credit: 'Cartão de Crédito',
+  debit: 'Cartão de Débito',
+  boleto: 'Boleto',
+  pix: 'PIX',
+};
 
 const initialData = [
   {
     id: nanoid(),
-    date: new Date(),
+    date: '2021-07-01',
     description: 'Netflix',
     type: 'expense',
-    method: 'Cartão de Crédito',
+    method: 'credit',
     value: 45,
   },
   {
     id: nanoid(),
-    date: new Date(),
+    date: '2021-07-01',
     description: 'Pix do ciclano',
     type: 'recipe',
-    method: null,
+    method: 'pix',
     value: 130,
   },
 ];
 
 export default function DashboardPage() {
   const [transactions, setTransactions] = useState(initialData);
+  const [edition, setEdition] = useState({});
+
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const toast = useToast();
+
+  useEffect(() => {
+    if (!isOpen) {
+      setEdition({});
+    }
+  }, [isOpen]);
 
   function createTransaction({ date, description, type, method, value }) {
     setTransactions(currentState => [
@@ -54,12 +71,49 @@ export default function DashboardPage() {
     ]);
   }
 
+  function updateTransaction(id, data) {
+    const index = transactions.findIndex(item => item.id === id);
+    const newTransactions = [...transactions];
+    newTransactions[index] = {
+      id,
+      ...data,
+    };
+    setTransactions(newTransactions);
+  }
+
+  function saveTransaction(data, id = null) {
+    if (id) {
+      updateTransaction(id, data);
+    } else {
+      createTransaction(data);
+    }
+
+    toast({
+      description: `Transação ${id ? 'atualizada' : 'cadastrada'} com sucesso`,
+      status: 'success',
+    });
+  }
+
+  function editTransaction(item) {
+    setEdition(item);
+    onOpen();
+  }
+
+  function removeTransaction(id) {
+    setTransactions(transactions.filter(item => item.id !== id));
+    toast({
+      description: 'Transação excluída com sucesso',
+      status: 'success',
+    });
+  }
+
   return (
     <>
       <ModalTransaction
         isOpen={isOpen}
         onClose={onClose}
-        createTransaction={createTransaction}
+        saveTransaction={saveTransaction}
+        editData={edition}
       />
       <Flex justifyContent="space-between" py={4}>
         <Heading size="md">Transações</Heading>
@@ -67,7 +121,7 @@ export default function DashboardPage() {
           Nova transação
         </Button>
       </Flex>
-      <Table variant="simple">
+      <Table variant="simple" size="sm">
         <TableCaption color="gray.500">
           Exibindo {transactions.length} registros
         </TableCaption>
@@ -77,23 +131,52 @@ export default function DashboardPage() {
             <Th>Descrição</Th>
             <Th>Meio de pagamento</Th>
             <Th isNumeric>Valor</Th>
+            <Th width="20%" textAlign="center">
+              Ações
+            </Th>
           </Tr>
         </Thead>
         <Tbody>
           {transactions.map(item => (
             <Tr key={item.id}>
-              <Td>{item.date.toLocaleDateString()}</Td>
+              <Td>
+                {new Date(item.date).toLocaleDateString('pt-BR', {
+                  timeZone: 'UTC',
+                })}
+              </Td>
               <Td>{item.description}</Td>
-              <Td>{item.method}</Td>
+              <Td>{methods[item.method]}</Td>
               <Td
                 isNumeric
                 color={item.type === 'expense' ? 'red.400' : 'green.500'}
+                fontWeight="bold"
               >
                 {item.type === 'expense' ? '-' : ''}
                 {(+item.value).toLocaleString('pt-br', {
                   style: 'currency',
                   currency: 'BRL',
                 })}
+              </Td>
+              <Td textAlign="center">
+                <Button
+                  leftIcon={<EditIcon />}
+                  variant="ghost"
+                  colorScheme="blue"
+                  size="sm"
+                  mr={1}
+                  onClick={() => editTransaction(item)}
+                >
+                  Editar
+                </Button>
+                <Button
+                  leftIcon={<DeleteIcon />}
+                  variant="ghost"
+                  colorScheme="red"
+                  size="sm"
+                  onClick={() => removeTransaction(item.id)}
+                >
+                  Excluir
+                </Button>
               </Td>
             </Tr>
           ))}
