@@ -64,9 +64,6 @@ export default function ModalTransaction({
       setValue('method', '');
     }
   }, [watchType]);
-  useEffect(() => {
-    console.log(errors);
-  }, [errors]);
 
   function onSubmit(data) {
     const id = isEdit ? editData.id : null;
