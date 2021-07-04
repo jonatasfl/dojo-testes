@@ -30,10 +30,12 @@ export default class Total extends React.Component { //eslint-disable-line
         <StatLabel>{typesMap[type].title}</StatLabel>
         <StatNumber color={typesMap[type].color}>
           {typesMap[type].icon}
-          {(+value).toLocaleString('pt-br', {
-            style: 'currency',
-            currency: 'BRL',
-          })}
+          <span aria-label={typesMap[type].title}>
+            {(+value).toLocaleString('pt-br', {
+              style: 'currency',
+              currency: 'BRL',
+            })}
+          </span>
         </StatNumber>
       </Stat>
     );
